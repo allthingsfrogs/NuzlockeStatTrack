@@ -1,0 +1,67 @@
+=== PARTY ===
+
+Eevee
+Level: 12
+Mild Nature
+Ability: Run Away
+EVs: 0 HP / 5 Atk / 3 Def / 1 Spe / 1 SpA / 2 SpD
+IVs: 2 HP / 24 Atk / 12 Def / 14 Spe / 8 SpA / 9 SpD
+- Tail Whip
+- Tackle
+- Helping Hand
+- Bite
+
+Dratini
+Level: 11
+Adamant Nature
+Ability: Shed Skin
+EVs: 1 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 24 HP / 20 Atk / 5 Def / 1 Spe / 1 SpA / 29 SpD
+- Wrap
+- Leer
+- Thunder Wave
+- Twister
+
+Taillow
+Level: 12
+Bold Nature
+Ability: Scrappy
+EVs: 1 HP / 3 Atk / 1 Def / 1 Spe / 1 SpA / 1 SpD
+IVs: 29 HP / 7 Atk / 2 Def / 23 Spe / 6 SpA / 25 SpD
+- Peck
+- Growl
+- Focus Energy
+- Quick Attack
+
+Totodile
+Level: 12
+Relaxed Nature
+Ability: Guts
+EVs: 3 HP / 1 Atk / 1 Def / 4 Spe / 0 SpA / 3 SpD
+IVs: 25 HP / 9 Atk / 11 Def / 3 Spe / 14 SpA / 18 SpD
+- Scratch
+- Leer
+- Water Gun
+- Rage
+
+Charmander
+Level: 12
+Hasty Nature
+Ability: Blaze
+EVs: 0 HP / 0 Atk / 1 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 26 HP / 30 Atk / 1 Def / 8 Spe / 10 SpA / 14 SpD
+- Scratch
+- Growl
+- Ember
+- Smokescreen
+
+Larvitar
+Level: 11
+Careful Nature
+Ability: Battle Armor
+EVs: 1 HP / 1 Atk / 0 Def / 0 Spe / 1 SpA / 0 SpD
+IVs: 28 HP / 18 Atk / 15 Def / 21 Spe / 25 SpA / 23 SpD
+- Bite
+- Leer
+- Sandstorm
+- Screech

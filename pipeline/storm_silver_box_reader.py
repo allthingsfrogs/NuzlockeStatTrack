@@ -1,4 +1,6 @@
 import struct
+from pathlib import Path
+import pandas as pd
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS big block starts at 0x0F700
@@ -14,6 +16,17 @@ NUM_BOXES           = 18
 BOX_PADDED_SIZE     = 0x1000   # each box padded to 4096 bytes
 
 OUTPUT_TXT = "all_pokemon.txt"
+
+PROJECT_ROOT_DIR = Path("..")  # always relative to the script
+#SCRIPT_DIR = Path(__file__).parent.parent / 'resources'
+
+ABILITIES = next(PROJECT_ROOT_DIR.rglob("abilities.txt"), None)
+ITEMS = next(PROJECT_ROOT_DIR.rglob("items.txt"), None)
+LOCATIONS = next(PROJECT_ROOT_DIR.rglob("locations.txt"), None)
+MOVES = next(PROJECT_ROOT_DIR.rglob("moves.txt"), None)
+SPECIES_ABILITIES = next(PROJECT_ROOT_DIR.rglob("species_abilities.csv"), None)
+SPECIES = next(PROJECT_ROOT_DIR.rglob("species.txt"), None)
+TYPES_BY_SPECIES = next(PROJECT_ROOT_DIR.rglob("types_by_species.csv"), None)
 
 # ── Lookup tables ─────────────────────────────────────────────────────────────
 NATURES = [
@@ -32,19 +45,19 @@ BLOCK_ORDERS = [
 ]
 
 # ── Data loaders ──────────────────────────────────────────────────────────────
-def get_species_name(species_id):
+def get_species_name(dex_num):
     try:
-        with open('Species.txt', 'r') as f:
+        with open(SPECIES, 'r') as f:
             names = [line.strip() for line in f]
-        return names[species_id - 1] if 0 < species_id <= len(names) else f"Unknown({species_id})"
+        return names[dex_num - 1] if 0 < dex_num <= len(names) else f"Unknown({dex_num})"
     except FileNotFoundError:
-        return f"Species({species_id})"
+        return f"Species({dex_num})"
 
 def get_move_name(move_id):
     if move_id == 0:
         return None
     try:
-        with open('Moves.txt', 'r') as f:
+        with open(MOVES, 'r') as f:
             moves = [line.strip() for line in f]
         return moves[move_id - 1] if 0 < move_id <= len(moves) else f"Move({move_id})"
     except FileNotFoundError:
@@ -54,7 +67,7 @@ def get_item_name(item_id):
     if item_id == 0:
         return None
     try:
-        with open('Items.txt', 'r') as f:
+        with open(ITEMS, 'r') as f:
             items = [line.strip() for line in f]
         return items[item_id - 1] if 0 < item_id <= len(items) else f"Item({item_id})"
     except FileNotFoundError:
@@ -62,7 +75,7 @@ def get_item_name(item_id):
 
 def get_ability_name(ability_id):
     try:
-        with open('Abilities.txt', 'r') as f:
+        with open(ABILITIES, 'r') as f:
             abilities = [line.strip() for line in f]
         return abilities[ability_id] if 0 <= ability_id < len(abilities) else f"Ability({ability_id})"
     except FileNotFoundError:
@@ -70,11 +83,23 @@ def get_ability_name(ability_id):
 
 def get_location_name(location_id):
     try:
-        with open('Locations.txt', 'r') as f:
+        with open(LOCATIONS, 'r') as f:
             locations = [line.strip() for line in f]
         return locations[location_id] if 0 <= location_id < len(locations) else f"Location({location_id})"
     except FileNotFoundError:
         return f"Location({location_id})"
+    
+def get_type(species):
+    df = pd.read_csv(TYPES_BY_SPECIES)
+    matches = df[df['species'] == species]
+
+    print(f"Looking for: '{species}'")      # what are you searching for?
+    print(f"Matches found: {len(matches)}") # is it finding anything?
+
+    row = df[df['species'] == species].iloc[0]
+    type1 = row['type1']
+    type2 = row['type2'] if pd.notna(row['type2']) else None
+    return type1, type2
 
 # ── Gen IV decryption ─────────────────────────────────────────────────────────
 def prng_next(seed):
@@ -140,7 +165,7 @@ def parse_box_pokemon(raw):
     unshuffled       = unshuffle_blocks(decrypted, pv)
 
     # Block A
-    species_id = struct.unpack_from('<H', unshuffled, 0x00)[0]
+    dex_num = struct.unpack_from('<H', unshuffled, 0x00)[0]
     held_item  = struct.unpack_from('<H', unshuffled, 0x02)[0]
     ability_id = unshuffled[0x0D]
     ev_hp      = unshuffled[0x10]
@@ -174,12 +199,17 @@ def parse_box_pokemon(raw):
     met_location    = get_location_name(met_location_id)
 
     nature  = NATURES[pv % 25]
-    species = get_species_name(species_id)
+    species = get_species_name(dex_num)
+
+    # Pokemon's Typing
+    type1, type2 = get_type(species)
 
     return {
         'species':      species,
-        'species_id':   species_id,
+        'dex_num':      dex_num,
         'nickname':     nickname,
+        'type1':        type1,
+        'type2':        type2,
         'held_item':    get_item_name(held_item),
         'ability':      get_ability_name(ability_id),
         'nature':       nature,
@@ -190,6 +220,7 @@ def parse_box_pokemon(raw):
         'iv_hp': iv_hp, 'iv_atk': iv_atk, 'iv_def': iv_def,
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
+        'personality_val' : pv,
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────

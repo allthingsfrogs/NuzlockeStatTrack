@@ -24,8 +24,9 @@ LOCAL_PATH = os.getenv("LOCAL")
 metadata = dbx.files_get_metadata(DB_PATH)
 last_hash = metadata.content_hash
 
+ # poll every 5 seconds
 while True:
-    time.sleep(5) # poll every 20 seconds
+    time.sleep(5)
 
     metadata = dbx.files_get_metadata(DB_PATH)
 
@@ -36,7 +37,7 @@ while True:
         with open(LOCAL_PATH, "wb") as f:
             f.write(response.content)
 
-        export_party(LOCAL_PATH)
+        #export_party(LOCAL_PATH)
 
         last_hash = metadata.content_hash
         print(f"Downloadednew version (rev: {metadata.rev})")

@@ -65,3 +65,327 @@ IVs: 28 HP / 18 Atk / 15 Def / 21 Spe / 25 SpA / 23 SpD
 - Leer
 - Sandstorm
 - Screech
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Ability(28)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Move(301)
+- Move(329)
+- Move(342)
+- Move(329)
+
+Rattata
+Naughty Nature
+Ability: Ability(62)
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Move(33)
+- Move(39)
+- Move(98)
+
+Magnemite
+Mild Nature
+Ability: Ability(5)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Move(319)
+- Move(33)
+- Move(84)
+- Move(48)
+
+Magikarp
+Serious Nature
+Ability: Ability(33)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Move(145)
+- Move(179)
+- Move(33)
+
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Ability(28)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Move(301)
+- Move(329)
+- Move(342)
+- Move(329)
+
+Rattata
+Naughty Nature
+Ability: Ability(62)
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Move(33)
+- Move(39)
+- Move(98)
+
+Magnemite
+Mild Nature
+Ability: Ability(5)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Move(319)
+- Move(33)
+- Move(84)
+- Move(48)
+
+Magikarp
+Serious Nature
+Ability: Ability(33)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Move(145)
+- Move(179)
+- Move(33)
+
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Ability(28)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Move(301)
+- Move(329)
+- Move(342)
+- Move(329)
+
+Rattata
+Naughty Nature
+Ability: Ability(62)
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Move(33)
+- Move(39)
+- Move(98)
+
+Magnemite
+Mild Nature
+Ability: Ability(5)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Move(319)
+- Move(33)
+- Move(84)
+- Move(48)
+
+Magikarp
+Serious Nature
+Ability: Ability(33)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Move(145)
+- Move(179)
+- Move(33)
+
+
+=== PC BOXES ===
+
+Species(63)
+Calm Nature
+Ability: Ability(28)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Move(301)
+- Move(329)
+- Move(342)
+- Move(329)
+Species(19)
+Naughty Nature
+Ability: Ability(62)
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Move(33)
+- Move(39)
+- Move(98)
+Species(81)
+Mild Nature
+Ability: Ability(5)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Move(319)
+- Move(33)
+- Move(84)
+- Move(48)
+Species(129)
+Serious Nature
+Ability: Ability(33)
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Move(145)
+- Move(179)
+- Move(33)
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Synchronize
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Ice Ball
+- Sheer Cold
+- Poison Tail
+- Sheer Cold
+
+Rattata
+Naughty Nature
+Ability: Guts
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Tackle
+- Tail Whip
+- Quick Attack
+
+Magnemite
+Mild Nature
+Ability: Sturdy
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Metal Sound
+- Tackle
+- Thunder Shock
+- Supersonic
+
+Magikarp
+Serious Nature
+Ability: Swift Swim
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Bubble
+- Reversal
+- Tackle
+
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Synchronize
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Ice Ball
+- Sheer Cold
+- Poison Tail
+- Sheer Cold
+
+Rattata
+Naughty Nature
+Ability: Guts
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Tackle
+- Tail Whip
+- Quick Attack
+
+Magnemite
+Mild Nature
+Ability: Sturdy
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Metal Sound
+- Tackle
+- Thunder Shock
+- Supersonic
+
+Magikarp
+Serious Nature
+Ability: Swift Swim
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Bubble
+- Reversal
+- Tackle
+
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Synchronize
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Ice Ball
+- Sheer Cold
+- Poison Tail
+- Sheer Cold
+
+Rattata
+Naughty Nature
+Ability: Guts
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Tackle
+- Tail Whip
+- Quick Attack
+
+Magnemite
+Mild Nature
+Ability: Sturdy
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Metal Sound
+- Tackle
+- Thunder Shock
+- Supersonic
+
+Magikarp
+Serious Nature
+Ability: Swift Swim
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Bubble
+- Reversal
+- Tackle
+
+
+=== PC BOXES ===
+
+Abra
+Calm Nature
+Ability: Synchronize
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Ice Ball
+- Sheer Cold
+- Poison Tail
+- Sheer Cold
+
+Rattata
+Naughty Nature
+Ability: Guts
+EVs: 0 HP / 0 Atk / 0 Def / 1 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Tackle
+- Tail Whip
+- Quick Attack
+
+Magnemite
+Mild Nature
+Ability: Sturdy
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Metal Sound
+- Tackle
+- Thunder Shock
+- Supersonic
+
+Magikarp
+Serious Nature
+Ability: Swift Swim
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Bubble
+- Reversal
+- Tackle
+

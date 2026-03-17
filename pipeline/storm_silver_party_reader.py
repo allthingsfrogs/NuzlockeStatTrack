@@ -1,4 +1,6 @@
 import struct
+from pathlib import Path
+import pandas as pd
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS small block starts at 0x00000
@@ -16,6 +18,16 @@ PARTY_SIZE            = 6
 BOX_POKEMON_SIZE      = 136
 
 OUTPUT_TXT = "all_pokemon.txt"
+
+PROJECT_ROOT_DIR = Path("..")
+
+ABILITIES = next(PROJECT_ROOT_DIR.rglob("abilities.txt"), None)
+ITEMS = next(PROJECT_ROOT_DIR.rglob("items.txt"), None)
+LOCATIONS = next(PROJECT_ROOT_DIR.rglob("locations.txt"), None)
+MOVES = next(PROJECT_ROOT_DIR.rglob("moves.txt"), None)
+SPECIES_ABILITIES = next(PROJECT_ROOT_DIR.rglob("species_abilities.csv"), None)
+SPECIES = next(PROJECT_ROOT_DIR.rglob("species.txt"), None)
+TYPES_BY_SPECIES = next(PROJECT_ROOT_DIR.rglob("types_by_species.csv"), None)
 
 # ── Lookup tables ─────────────────────────────────────────────────────────────
 NATURES = [
@@ -36,19 +48,19 @@ BLOCK_ORDERS = [
 ]
 
 # ── Data loaders ──────────────────────────────────────────────────────────────
-def get_species_name(species_id):
+def get_species_name(dex_num):
     try:
-        with open('Species.txt', 'r') as f:
+        with open(SPECIES, 'r') as f:
             names = [line.strip() for line in f]
-        return names[species_id - 1] if 0 < species_id <= len(names) else f"Unknown({species_id})"
+        return names[dex_num - 1] if 0 < dex_num <= len(names) else f"Unknown({dex_num})"
     except FileNotFoundError:
-        return f"Species({species_id})"
+        return f"Species({dex_num})"
 
 def get_move_name(move_id):
     if move_id == 0:
         return None
     try:
-        with open('Moves.txt', 'r') as f:
+        with open(MOVES, 'r') as f:
             moves = [line.strip() for line in f]
         return moves[move_id - 1] if 0 < move_id <= len(moves) else f"Move({move_id})"
     except FileNotFoundError:
@@ -58,7 +70,7 @@ def get_item_name(item_id):
     if item_id == 0:
         return None
     try:
-        with open('Items.txt', 'r') as f:
+        with open(ITEMS, 'r') as f:
             items = [line.strip() for line in f]
         return items[item_id - 1] if 0 < item_id <= len(items) else f"Item({item_id})"
     except FileNotFoundError:
@@ -66,7 +78,7 @@ def get_item_name(item_id):
 
 def get_ability_name(ability_id):
     try:
-        with open('Abilities.txt', 'r') as f:
+        with open(ABILITIES, 'r') as f:
             abilities = [line.strip() for line in f]
         return abilities[ability_id] if 0 <= ability_id < len(abilities) else f"Ability({ability_id})"
     except FileNotFoundError:
@@ -74,11 +86,18 @@ def get_ability_name(ability_id):
 
 def get_location_name(location_id):
     try:
-        with open('Locations.txt', 'r') as f:
+        with open(LOCATIONS, 'r') as f:
             locations = [line.strip() for line in f]
         return locations[location_id] if 0 <= location_id < len(locations) else f"Location({location_id})"
     except FileNotFoundError:
         return f"Location({location_id})"
+    
+def get_type(species):
+    df = pd.read_csv(TYPES_BY_SPECIES)
+    row = df[df['species'] == species].iloc[0]
+    type1 = row['type1']
+    type2 = row['type2'] if pd.notna(row['type2']) else None
+    return type1, type2
 
 # ── Gen IV decryption ─────────────────────────────────────────────────────────
 def prng_next(seed):
@@ -159,7 +178,7 @@ def parse_pokemon_gen4(raw, is_party=True):
     unshuffled       = unshuffle_blocks(decrypted, pv)
 
     # Block A (offset 0x00 within unshuffled)
-    species_id  = struct.unpack_from('<H', unshuffled, 0x00)[0]
+    dex_num  = struct.unpack_from('<H', unshuffled, 0x00)[0]
     held_item   = struct.unpack_from('<H', unshuffled, 0x02)[0]
     ability_id  = unshuffled[0x0D]
     ev_hp       = unshuffled[0x10]
@@ -194,7 +213,7 @@ def parse_pokemon_gen4(raw, is_party=True):
     met_location    = get_location_name(met_location_id)
 
     nature  = NATURES[pv % 25]
-    species = get_species_name(species_id)
+    species = get_species_name(dex_num)
 
     # Level from battle stats (party only)
     level = None
@@ -203,11 +222,16 @@ def parse_pokemon_gen4(raw, is_party=True):
         battle_dec   = decrypt_battle_stats(battle_raw, pv)
         level        = battle_dec[0x04] if len(battle_dec) > 0x04 else None
 
+    # Pokemon's Typing
+    type1, type2 = get_type(species)
+
     return {
         'species':      species,
-        'species_id':   species_id,
+        'dex_num':      dex_num,
         'nickname':     nickname,
         'level':        level,
+        'type1':        type1,
+        'type2':        type2,
         'held_item':    get_item_name(held_item),
         'ability':      get_ability_name(ability_id),
         'nature':       nature,
@@ -218,6 +242,7 @@ def parse_pokemon_gen4(raw, is_party=True):
         'iv_hp': iv_hp, 'iv_atk': iv_atk, 'iv_def': iv_def,
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
+        'personality_val' : pv,
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────
@@ -251,7 +276,7 @@ def read_party(sav_path):
             if pv == 0 and chk == 0:
                 continue
             mon = parse_pokemon_gen4(raw, is_party=True)
-            if mon and mon['species_id'] > 0:
+            if mon and mon['dex_num'] > 0:
                 party.append(mon)
         if party:
             print(f"DEBUG: found {len(party)} party pokemon at base 0x{base:05X}")
@@ -317,5 +342,5 @@ def export_party(sav_path):
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import sys
-    path = sys.argv[1] if len(sys.argv) > 1 else "storm_silver.sav"
+    path = sys.argv[1] if len(sys.argv) > 1 else "GameSave-a226e7265da21ab17b3a0f27b992becd5435033e-gameSave"
     export_party(path)

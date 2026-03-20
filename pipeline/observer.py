@@ -17,8 +17,8 @@ dbx = dropbox.Dropbox(
     app_secret=A_S
 )
 
-DB_PATH = os.getenv("DB_PATH")
-LOCAL_PATH = os.getenv("LOCAL")
+DB_PATH = os.getenv("DROPOX_PATH")
+GAME_SAV = os.getenv("SAV")
 
 # get initial state
 metadata = dbx.files_get_metadata(DB_PATH)
@@ -34,7 +34,7 @@ while True:
         print("Game Updated, downloading. . .")
         _, response = dbx.files_download(DB_PATH)
 
-        with open(LOCAL_PATH, "wb") as f:
+        with open(GAME_SAV, "wb") as f:
             f.write(response.content)
 
         #export_party(LOCAL_PATH)

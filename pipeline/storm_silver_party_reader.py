@@ -1,6 +1,7 @@
 import struct
 from pathlib import Path
 import pandas as pd
+import os 
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS small block starts at 0x00000
@@ -18,6 +19,8 @@ PARTY_SIZE            = 6
 BOX_POKEMON_SIZE      = 136
 
 OUTPUT_TXT = "all_pokemon.txt"
+
+GAME_SAV = os.getenv("SAV")
 
 PROJECT_ROOT_DIR = Path("..")
 
@@ -209,18 +212,18 @@ def parse_pokemon_gen4(raw, is_party=True):
     #nickname = get_species_name(species_id)
 
     # Block D (offset 0x60 within unshuffled) — met location
-    met_location_id = struct.unpack_from('<H', unshuffled, 0x60)[0]
-    met_location    = get_location_name(met_location_id)
+    location_met_id = struct.unpack_from('<H', unshuffled, 0x60)[0]
+    location_met    = get_location_name(location_met_id)
 
     nature  = NATURES[pv % 25]
     species = get_species_name(dex_num)
 
     # Level from battle stats (party only)
-    level = None
+    exp_level = None
     if is_party and len(raw) >= 0x8D:
         battle_raw   = raw[0x88:]
         battle_dec   = decrypt_battle_stats(battle_raw, pv)
-        level        = battle_dec[0x04] if len(battle_dec) > 0x04 else None
+        exp_level        = battle_dec[0x04] if len(battle_dec) > 0x04 else None
 
     # Pokemon's Typing
     type1, type2 = get_type(species)
@@ -229,20 +232,20 @@ def parse_pokemon_gen4(raw, is_party=True):
         'species':      species,
         'dex_num':      dex_num,
         'nickname':     nickname,
-        'level':        level,
+        'exp_level':     exp_level,
         'type1':        type1,
         'type2':        type2,
         'held_item':    get_item_name(held_item),
         'ability':      get_ability_name(ability_id),
         'nature':       nature,
         'is_egg':       is_egg,
-        'met_location': met_location,
+        'location_met': location_met,
         'ev_hp': ev_hp, 'ev_atk': ev_atk, 'ev_def': ev_def,
         'ev_spe': ev_spe, 'ev_spa': ev_spa, 'ev_spd': ev_spd,
         'iv_hp': iv_hp, 'iv_atk': iv_atk, 'iv_def': iv_def,
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
-        'personality_val' : pv,
+        'personality_value' : pv,
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────
@@ -309,8 +312,8 @@ def to_showdown(party):
         if p['held_item']:
             header += f" @ {p['held_item']}"
         lines.append(header)
-        if p['level'] is not None:
-            lines.append(f"Level: {p['level']}")
+        if p['exp_level'] is not None:
+            lines.append(f"Level: {p['exp_level']}")
         
         lines.append(f"{p['nature']} Nature")
         
@@ -342,5 +345,5 @@ def export_party(sav_path):
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import sys
-    path = sys.argv[1] if len(sys.argv) > 1 else "GameSave-a226e7265da21ab17b3a0f27b992becd5435033e-gameSave"
+    path = sys.argv[1] if len(sys.argv) > 1 else GAME_SAV
     export_party(path)

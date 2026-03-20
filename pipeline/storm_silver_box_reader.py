@@ -1,6 +1,7 @@
 import struct
 from pathlib import Path
 import pandas as pd
+import os 
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS big block starts at 0x0F700
@@ -15,9 +16,12 @@ BOX_CAPACITY        = 30
 NUM_BOXES           = 18
 BOX_PADDED_SIZE     = 0x1000   # each box padded to 4096 bytes
 
+
 OUTPUT_TXT = "all_pokemon.txt"
 
-PROJECT_ROOT_DIR = Path("..")  # always relative to the script
+GAME_SAV = os.getenv("SAV")
+
+PROJECT_ROOT_DIR = Path("..")
 #SCRIPT_DIR = Path(__file__).parent.parent / 'resources'
 
 ABILITIES = next(PROJECT_ROOT_DIR.rglob("abilities.txt"), None)
@@ -195,8 +199,8 @@ def parse_box_pokemon(raw):
     nickname     = decode_nickname(nickname_raw) if is_nicknamed else ""
 
     # Block D — met location
-    met_location_id = struct.unpack_from('<H', unshuffled, 0x60)[0]
-    met_location    = get_location_name(met_location_id)
+    location_met_id = struct.unpack_from('<H', unshuffled, 0x60)[0]
+    location_met    = get_location_name(location_met_id)
 
     nature  = NATURES[pv % 25]
     species = get_species_name(dex_num)
@@ -214,13 +218,13 @@ def parse_box_pokemon(raw):
         'ability':      get_ability_name(ability_id),
         'nature':       nature,
         'is_egg':       is_egg,
-        'met_location': met_location,
+        'location_met': location_met,
         'ev_hp': ev_hp, 'ev_atk': ev_atk, 'ev_def': ev_def,
         'ev_spe': ev_spe, 'ev_spa': ev_spa, 'ev_spd': ev_spd,
         'iv_hp': iv_hp, 'iv_atk': iv_atk, 'iv_def': iv_def,
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
-        'personality_val' : pv,
+        'personality_value' : pv,
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────
@@ -313,7 +317,7 @@ def export_boxes(boxes):
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import sys
-    path  = sys.argv[1] if len(sys.argv) > 1 else "GameSave-a226e7265da21ab17b3a0f27b992becd5435033e-gameSave"
+    path  = sys.argv[1] if len(sys.argv) > 1 else GAME_SAV
     boxes = read_boxes(path)
     print_boxes(boxes)
     export_boxes(boxes)

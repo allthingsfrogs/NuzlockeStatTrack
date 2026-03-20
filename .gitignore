@@ -1,4 +1,7 @@
-config.txt
+db_refresh.py
+box_reader_v1.py
+party_reader_v1.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

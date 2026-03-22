@@ -3,7 +3,7 @@ import time
 from dotenv import load_dotenv
 import os 
 from dropbox import DropboxOAuth2FlowNoRedirect
-from pipeline.storm_silver_party_reader import export_party
+from storm_silver_party_reader import export_party
 
 load_dotenv()
 
@@ -17,7 +17,7 @@ dbx = dropbox.Dropbox(
     app_secret=A_S
 )
 
-DB_PATH = os.getenv("DROPOX_PATH")
+DB_PATH = os.getenv("DROPBOX_PATH")
 GAME_SAV = os.getenv("SAV")
 
 # get initial state
@@ -40,7 +40,7 @@ while True:
         #export_party(LOCAL_PATH)
 
         last_hash = metadata.content_hash
-        print(f"Downloadednew version (rev: {metadata.rev})")
+        print(f"Downloaded new version (rev: {metadata.rev})")
 
     else:
         print("Polling...")

@@ -2,6 +2,7 @@ import struct
 from pathlib import Path
 import pandas as pd
 import os 
+from reader_utils import exp_to_level, get_growth_rate
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS big block starts at 0x0F700
@@ -16,13 +17,13 @@ BOX_CAPACITY        = 30
 NUM_BOXES           = 18
 BOX_PADDED_SIZE     = 0x1000   # each box padded to 4096 bytes
 
-
-OUTPUT_TXT = "all_pokemon.txt"
-
 GAME_SAV = os.getenv("SAV")
 
 PROJECT_ROOT_DIR = Path("..")
 #SCRIPT_DIR = Path(__file__).parent.parent / 'resources'
+
+#OUTPUT_TXT = "all_pokemon.txt"
+OUTPUT_TXT = PROJECT_ROOT_DIR / "showdown" / "all_pokemon.txt"
 
 ABILITIES = next(PROJECT_ROOT_DIR.rglob("abilities.txt"), None)
 ITEMS = next(PROJECT_ROOT_DIR.rglob("items.txt"), None)
@@ -31,6 +32,8 @@ MOVES = next(PROJECT_ROOT_DIR.rglob("moves.txt"), None)
 SPECIES_ABILITIES = next(PROJECT_ROOT_DIR.rglob("species_abilities.csv"), None)
 SPECIES = next(PROJECT_ROOT_DIR.rglob("species.txt"), None)
 TYPES_BY_SPECIES = next(PROJECT_ROOT_DIR.rglob("types_by_species.csv"), None)
+
+
 
 # ── Lookup tables ─────────────────────────────────────────────────────────────
 NATURES = [
@@ -205,6 +208,11 @@ def parse_box_pokemon(raw):
     nature  = NATURES[pv % 25]
     species = get_species_name(dex_num)
 
+    # Level from experience points
+    exp             = struct.unpack_from('<I', unshuffled, 0x08)[0]
+    growth_rate     = get_growth_rate(species)
+    exp_level       = exp_to_level(exp, growth_rate)
+
     # Pokemon's Typing
     type1, type2 = get_type(species)
 
@@ -212,6 +220,7 @@ def parse_box_pokemon(raw):
         'species':      species,
         'dex_num':      dex_num,
         'nickname':     nickname,
+        'exp_level':    exp_level,
         'type1':        type1,
         'type2':        type2,
         'held_item':    get_item_name(held_item),
@@ -225,6 +234,7 @@ def parse_box_pokemon(raw):
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
         'personality_value' : pv,
+        'growth_rate' : growth_rate,
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────

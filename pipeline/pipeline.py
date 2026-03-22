@@ -4,8 +4,9 @@ import hashlib
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-from pipeline.storm_silver_party_reader import read_party, export_party
-from pipeline.storm_silver_box_reader import read_boxes, print_boxes, export_boxes
+from storm_silver_party_reader import read_party, export_party
+from storm_silver_box_reader import read_boxes, print_boxes, export_boxes
+from changes import compute_changes, record_changes
 
 '''if __name__ == "__main__":
     path = sys.argv[1] if len(sys.argv) > 1 else "save.sav"
@@ -85,8 +86,8 @@ def build_party_df(party, session_id, engine, run_id):
             'session_id':   session_id,
             'pokemon_id':   pokemon_id,
             'species':      mon['species'],
-            'pokemon_type1': mon['type1'],
-            'pokemon_type2': mon['type2'],
+            'type1': mon['type1'],
+            'type2': mon['type2'],
             'exp_level':    mon['exp_level'],
             'nature':       mon['nature'],
             'ability':      mon['ability'],
@@ -109,6 +110,7 @@ def build_party_df(party, session_id, engine, run_id):
             'iv_spa':       mon['iv_spa'],
             'iv_spd':       mon['iv_spd'],
             'personality_value': mon['personality_value'],
+            'growth_rate':  mon['growth_rate'],
         })
     return pd.DataFrame(rows)
 
@@ -124,9 +126,9 @@ def build_box_df(boxes, session_id, engine, run_id):
                 'session_id':   session_id,
                 'pokemon_id':   pokemon_id,
                 'species':      mon['species'],
-                'pokemon_type1': mon['type1'],
-                'pokemon_type2': mon['type2'],
-                'exp_level':        mon['exp_level'],
+                'type1': mon['type1'],
+                'type2': mon['type2'],
+                'exp_level':    mon['exp_level'],
                 'nature':       mon['nature'],
                 'ability':      mon['ability'],
                 'held_item':    mon['held_item'],
@@ -148,6 +150,7 @@ def build_box_df(boxes, session_id, engine, run_id):
                 'iv_spa':       mon['iv_spa'],
                 'iv_spd':       mon['iv_spd'],
                 'personality_value': mon['personality_value'],
+                'growth_rate':  mon['growth_rate'],
                 #'box':          box_num,
                 #'slot':         slot_num,
                 
@@ -156,6 +159,7 @@ def build_box_df(boxes, session_id, engine, run_id):
 
 def write_to_db(df, table_name, engine):
     df.to_sql(table_name, engine, if_exists='append', index=False)
+
 
 def run_pipeline(sav_path):
     sav_hash = get_sav_hash(sav_path)
@@ -172,11 +176,17 @@ def run_pipeline(sav_path):
 
     party_df = build_party_df(party, session_id, engine, RUN_ID)
     box_df = build_box_df(boxes, session_id, engine, RUN_ID)
+
     write_to_db(party_df, 'party_snapshot', engine)
     print(f"Wrote {len(party_df)} party rows to database")
 
-    #compute_diff(engine, RUN_ID, session_id)  # step 8
+    write_to_db(box_df, 'box_snapshot', engine)
+    print(f"Wrote {len(box_df)} box rows to database")
 
+    changes = compute_changes(engine, RUN_ID, session_id)
+    for c in changes:
+        print(c)
+    record_changes(engine, session_id, changes)
 
 if __name__ == "__main__":
     run_pipeline(GAME_SAV)

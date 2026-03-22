@@ -2,6 +2,7 @@ import struct
 from pathlib import Path
 import pandas as pd
 import os 
+from reader_utils import exp_to_level, get_growth_rate
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 # HGSS small block starts at 0x00000
@@ -218,12 +219,10 @@ def parse_pokemon_gen4(raw, is_party=True):
     nature  = NATURES[pv % 25]
     species = get_species_name(dex_num)
 
-    # Level from battle stats (party only)
-    exp_level = None
-    if is_party and len(raw) >= 0x8D:
-        battle_raw   = raw[0x88:]
-        battle_dec   = decrypt_battle_stats(battle_raw, pv)
-        exp_level        = battle_dec[0x04] if len(battle_dec) > 0x04 else None
+    # Pokemon Level
+    exp            = struct.unpack_from('<I', unshuffled, 0x08)[0]
+    growth_rate    = get_growth_rate(species)  # looks up from types_by_species.csv
+    exp_level      = exp_to_level(exp, growth_rate)
 
     # Pokemon's Typing
     type1, type2 = get_type(species)
@@ -232,7 +231,7 @@ def parse_pokemon_gen4(raw, is_party=True):
         'species':      species,
         'dex_num':      dex_num,
         'nickname':     nickname,
-        'exp_level':     exp_level,
+        'exp_level':    exp_level,
         'type1':        type1,
         'type2':        type2,
         'held_item':    get_item_name(held_item),
@@ -246,6 +245,7 @@ def parse_pokemon_gen4(raw, is_party=True):
         'iv_spe': iv_spe, 'iv_spa': iv_spa, 'iv_spd': iv_spd,
         'moves': [get_move_name(m) for m in [move1, move2, move3, move4]],
         'personality_value' : pv,
+        'growth_rate' : growth_rate
     }
 
 # ── Save block selection ──────────────────────────────────────────────────────

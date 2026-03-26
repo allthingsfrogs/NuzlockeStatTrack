@@ -1,6 +1,6 @@
 # NuzlockeStatTrack
 
-A data pipeline and web viewer for tracking Pokémon save data during Nuzlocke runs. Parses binary `.sav` / `.dsv` files from Delta Emulator, stores team snapshots in a PostgreSQL database, tracks stat and move changes across sessions, and provides a web UI for viewing your party and PC boxes with one-click Showdown export.
+A data pipeline for tracking Pokémon save data during Nuzlocke runs. Parses binary `.sav` / `.dsv` files from Delta Emulator, stores team snapshots in a PostgreSQL database, tracks stat and move changes across sessions, and provides a .txt with all up-to-date Pokémon ready for easy export to a damage calculator.
 
 On Delta Emulator with Dropbox sync enabled, your save file syncs automatically every time you pause via the menu button.
 
@@ -25,8 +25,7 @@ On Delta Emulator with Dropbox sync enabled, your save file syncs automatically 
 - **Dropbox auto-sync** — polls your remote save every 5 seconds and triggers the pipeline automatically on change
 - **Session-based change tracking** — diffs consecutive saves to log level ups, move changes, evolutions, and party joins/leaves
 - **PostgreSQL persistence** — full session history with party/box snapshots and a detailed change log
-- **Web viewer** — upload a save file and instantly view your party and PC boxes with sprite images and type badges
-- **Showdown export** — click any Pokémon card to copy its Showdown Damage Calculator export to clipboard
+- **Showdown export** — resulting all_pokemon.txt provides easy place to export party/box pokemon onto Showdown Damage Calculator
 
 ---
 
@@ -43,10 +42,6 @@ NuzlockeStatTrack/
 │   ├── observer.py                  # Dropbox polling daemon
 │   └── db_refresh.py                # Dropbox OAuth token helper
 │
-├── nuzlocke_viewer/
-│   ├── nuzlocke_viewer.py           # Reflex web app: upload UI, party/box viewer, clipboard export
-│   └── assets/                      # Web assets
-│
 ├── resources/
 │   ├── species.txt                  # Pokémon names indexed by dex number
 │   ├── types_by_species.csv         # Type and growth rate lookup per species
@@ -62,7 +57,6 @@ NuzlockeStatTrack/
 ├── showdown/                        # Output directory for Showdown-format text exports
 ├── schema.sql                       # PostgreSQL schema
 ├── setup.py                         # Bootstrap script for initialising a new run in the DB
-├── rxconfig.py                      # Reflex framework config
 └── requirements.txt
 ```
 
@@ -102,7 +96,7 @@ Create a `.env` file in the project root:
 SAV=path/to/your/save.dsv
 
 # PostgreSQL connection string
-DATABASE_URL=postgresql://user:password@localhost:5432/your_database_name
+DATABASE_URL=postgresql://user:password@localhost:0000/your_database_name
 
 # Dropbox API credentials (https://www.dropbox.com/developers)
 DROPBOX_APP_KEY=your_app_key
@@ -150,51 +144,34 @@ Parses the save at `SAV` and updates the database:
 python pipeline/pipeline.py
 ```
 
-### Web viewer
-
-Upload a save file in the browser to view your team without touching the database:
-
-```bash
-reflex run
-```
-
-Open [http://localhost:3000](http://localhost:3000), drag and drop a `.sav` or `.dsv` file, and your party and PC boxes will load. Click any Pokémon card to copy its Showdown export to clipboard.
-
 ---
 
 ## Database Schema
 
-| Table | Description |
-|---|---|
-| `runs` | One row per playthrough. Tracks game name, save filename, and active status. |
-| `pokemon_identity` | Unique record per individual Pokémon, identified by `personality_value`. |
-| `game_session` | One row per save file update. Records save hash and timestamp. |
-| `party_snapshot` | Full party state at each session — all stats, moves, EVs, IVs. |
-| `box_snapshot` | Full box state at each session. |
-| `change_log` | Diffs between sessions: level ups, move changes, evolutions, party joins/leaves. |
-
----
-
-## Sprites
-
-Local sprites are served from `assets/sprites/` and must be named in lowercase to match the species name (e.g. `charizard.png`). If no local sprite is found, the viewer falls back to the [PokeAPI CDN](https://github.com/PokeAPI/sprites).
+| Table              | Description                                                                      |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `runs`             | One row per playthrough. Tracks game name, save filename, and active status.     |
+| `pokemon_identity` | Unique record per individual Pokémon, identified by `personality_value`.         |
+| `game_session`     | One row per save file update. Records save hash and timestamp.                   |
+| `party_snapshot`   | Full party state at each session — all stats, moves, EVs, IVs.                   |
+| `box_snapshot`     | Full box state at each session.                                                  |
+| `change_log`       | Diffs between sessions: level ups, move changes, evolutions, party joins/leaves. |
 
 ---
 
 ## Supported Games
 
-| Game | Readers |
-|---|---|
+| Game                             | Readers                                                      |
+| -------------------------------- | ------------------------------------------------------------ |
 | Pokémon Storm Silver (HGSS hack) | `storm_silver_party_reader.py`, `storm_silver_box_reader.py` |
 
 ---
 
 ## Dependencies
 
-| Package | Purpose |
-|---|---|
-| `reflex` | Web UI framework |
-| `pandas` | DataFrame operations and CSV lookups |
-| `SQLAlchemy` + `psycopg2-binary` | PostgreSQL ORM and driver |
-| `dropbox` | Dropbox API client for save file sync |
-| `python-dotenv` | `.env` file loading |
+| Package                          | Purpose                               |
+| -------------------------------- | ------------------------------------- |
+| `pandas`                         | DataFrame operations and CSV lookups  |
+| `SQLAlchemy` + `psycopg2-binary` | PostgreSQL ORM and driver             |
+| `dropbox`                        | Dropbox API client for save file sync |
+| `python-dotenv`                  | `.env` file loading                   |

@@ -19,11 +19,11 @@ PARTY_POKEMON_SIZE    = 236
 PARTY_SIZE            = 6
 BOX_POKEMON_SIZE      = 136
 
-OUTPUT_TXT = "all_pokemon.txt"
-
 GAME_SAV = os.getenv("SAV")
 
-PROJECT_ROOT_DIR = Path("..")
+PROJECT_ROOT_DIR = Path(__file__).resolve().parent.parent
+
+OUTPUT_TXT = PROJECT_ROOT_DIR / "showdown" / "all_pokemon.txt"
 
 ABILITIES = next(PROJECT_ROOT_DIR.rglob("abilities.txt"), None)
 ITEMS = next(PROJECT_ROOT_DIR.rglob("items.txt"), None)
@@ -56,7 +56,10 @@ def get_species_name(dex_num):
     try:
         with open(SPECIES, 'r') as f:
             names = [line.strip() for line in f]
-        return names[dex_num - 1] if 0 < dex_num <= len(names) else f"Unknown({dex_num})"
+        name = names[dex_num - 1] if 0 < dex_num <= len(names) else f"Unknown({dex_num})"
+        if len(name) <= 1:
+            print(f"[get_species_name] Suspicious name {repr(name)} for dex_num={dex_num}")
+        return name
     except FileNotFoundError:
         return f"Species({dex_num})"
 
@@ -98,7 +101,11 @@ def get_location_name(location_id):
     
 def get_type(species):
     df = pd.read_csv(TYPES_BY_SPECIES)
-    row = df[df['species'] == species].iloc[0]
+    matches = df[df['species'] == species]
+    if matches.empty:
+        print(f"[get_type] No match for species: '{species}'")
+        return "Normal", None
+    row = matches.iloc[0]
     type1 = row['type1']
     type2 = row['type2'] if pd.notna(row['type2']) else None
     return type1, type2
@@ -336,7 +343,8 @@ def to_showdown(party):
 def export_party(sav_path):
     party  = read_party(sav_path)
     output = to_showdown(party)
-    with open(OUTPUT_TXT, 'a', encoding='utf-8') as f:
+    OUTPUT_TXT.parent.mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_TXT, 'w', encoding='utf-8') as f:
         f.write("=== PARTY ===\n\n")
         f.write(output)
     print(output)
@@ -344,6 +352,11 @@ def export_party(sav_path):
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
     import sys
-    path = sys.argv[1] if len(sys.argv) > 1 else GAME_SAV
-    export_party(path)
+    path = sys.argv[1] if len(sys.argv) > 1 else os.getenv("SAV")
+    if not path:
+        print("Set SAV env var or pass the save path as an argument")
+    else:
+        export_party(path)

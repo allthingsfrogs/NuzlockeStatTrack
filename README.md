@@ -1,18 +1,200 @@
 # NuzlockeStatTrack
 
-A data pipeline which takes Pokemon save data from Delta Emulator and outputs your caught Pokemon's stats, moves, and nature in a format useable in the Showdown Damage Calculator. Updates automatically as you progress through a game and gives a master sheet of all your Pokemon, which makes damage calculations and boss fight preparations less tedious.
+A data pipeline and web viewer for tracking Pokémon save data during Nuzlocke runs. Parses binary `.sav` / `.dsv` files from Delta Emulator, stores team snapshots in a PostgreSQL database, tracks stat and move changes across sessions, and provides a web UI for viewing your party and PC boxes with one-click Showdown export.
 
-On Delta emulator with DropBox sync enabled, your save file should sync with the latest game data everytime you pause the game via the menu button.
+On Delta Emulator with Dropbox sync enabled, your save file syncs automatically every time you pause via the menu button.
 
-A high level overview of this pipeline:
+```
+.sav file → parser → Python dicts → Pandas DataFrame → PostgreSQL database
+                                  ↘ Showdown format .txt file
+```
 
-.sav file → parser → raw Python dicts → Pandas DataFrame → Postgresql database
-↘ Showdown format .txt file
+1. Detect save file changes via the Dropbox API
+2. Parse the `.sav` file — record all party and box Pokémon data
+   - 3a. Export to Showdown Damage Calculator format (master sheet)
+   - 3b. Push data into a Pandas DataFrame
+3. Update the PostgreSQL database with snapshots and a change log
 
-1. Detect if a change occurred in your save data from DropBox via the DropBox API
-2. Parse .sav file, record all party Pokemon and box Pokemon data
-   3a. Export Pokemon data into a showdown damage calc format in a compiled master sheet for quickly importing the Pokemon data into damage calculators
-   3b. Pass Pokemon data into a Pandas DataFrame
-3. Update and maintain a database recording all changes in Nuzlocke runs so far.
+> **Note:** Requires Dropbox sync on Delta Emulator. Google Drive does not allow access to raw `.sav` files.
 
-Must be used with the DropBox sync feature on Delta Emulator. Google Drive is an option for syncing and saving game data on the cloud, but it doesn't let you view or manipulate your uploaded .sav files.
+---
+
+## Features
+
+- **Binary save file parsing** — reads raw Gen IV NDS `.sav` / `.dsv` files, extracting IVs, EVs, moves, nature, ability, held item, location met, and level
+- **Dropbox auto-sync** — polls your remote save every 5 seconds and triggers the pipeline automatically on change
+- **Session-based change tracking** — diffs consecutive saves to log level ups, move changes, evolutions, and party joins/leaves
+- **PostgreSQL persistence** — full session history with party/box snapshots and a detailed change log
+- **Web viewer** — upload a save file and instantly view your party and PC boxes with sprite images and type badges
+- **Showdown export** — click any Pokémon card to copy its Showdown Damage Calculator export to clipboard
+
+---
+
+## Project Structure
+
+```
+NuzlockeStatTrack/
+├── pipeline/
+│   ├── pipeline.py                  # Main orchestration: parse → DataFrame → DB → change log
+│   ├── storm_silver_party_reader.py # Party parser for Storm Silver (HGSS-based)
+│   ├── storm_silver_box_reader.py   # Box parser for Storm Silver
+│   ├── reader_utils.py              # Shared utilities: exp-to-level, growth rate lookup
+│   ├── changes.py                   # Session diff logic: detects what changed between saves
+│   ├── observer.py                  # Dropbox polling daemon
+│   └── db_refresh.py                # Dropbox OAuth token helper
+│
+├── nuzlocke_viewer/
+│   ├── nuzlocke_viewer.py           # Reflex web app: upload UI, party/box viewer, clipboard export
+│   └── assets/                      # Web assets
+│
+├── resources/
+│   ├── species.txt                  # Pokémon names indexed by dex number
+│   ├── types_by_species.csv         # Type and growth rate lookup per species
+│   ├── abilities.txt                # Ability names indexed by ability ID
+│   ├── moves.txt                    # Move names indexed by move ID
+│   ├── items.txt                    # Item names indexed by item ID
+│   ├── locations.txt                # Location names indexed by location ID
+│   └── species_abilities.csv        # Species-to-ability mapping
+│
+├── assets/
+│   └── sprites/                     # Local Pokémon sprite PNGs (lowercase, e.g. charizard.png)
+│
+├── showdown/                        # Output directory for Showdown-format text exports
+├── schema.sql                       # PostgreSQL schema
+├── setup.py                         # Bootstrap script for initialising a new run in the DB
+├── rxconfig.py                      # Reflex framework config
+└── requirements.txt
+```
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Python 3.11+
+- PostgreSQL
+- Dropbox account with Delta Emulator save sync enabled
+- Delta Emulator on iOS
+
+### 1. Clone and install dependencies
+
+```bash
+git clone https://github.com/your-username/NuzlockeStatTrack.git
+cd NuzlockeStatTrack
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Create the database
+
+```bash
+psql -d your_database_name -f schema.sql
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+# Path to your local save file
+SAV=path/to/your/save.dsv
+
+# PostgreSQL connection string
+DATABASE_URL=postgresql://user:password@localhost:5432/your_database_name
+
+# Dropbox API credentials (https://www.dropbox.com/developers)
+DROPBOX_APP_KEY=your_app_key
+DROPBOX_APP_SECRET=your_app_secret
+DROPBOX_REFRESH_TOKEN=your_refresh_token
+
+# Dropbox path to your Delta save file
+DROPBOX_PATH=/path/to/save/on/dropbox.dsv
+
+# Run ID — set this after running setup.py
+RUN_ID=1
+```
+
+To generate your Dropbox refresh token:
+
+```bash
+python pipeline/db_refresh.py
+```
+
+### 4. Initialise a new Nuzlocke run
+
+```bash
+python setup.py
+```
+
+This inserts a row into the `runs` table and prints the `RUN_ID` to add to your `.env`.
+
+---
+
+## Usage
+
+### Auto-pipeline via Dropbox observer
+
+Watches your Dropbox save file and runs the full pipeline automatically on every change:
+
+```bash
+python pipeline/observer.py
+```
+
+### Run the pipeline manually
+
+Parses the save at `SAV` and updates the database:
+
+```bash
+python pipeline/pipeline.py
+```
+
+### Web viewer
+
+Upload a save file in the browser to view your team without touching the database:
+
+```bash
+reflex run
+```
+
+Open [http://localhost:3000](http://localhost:3000), drag and drop a `.sav` or `.dsv` file, and your party and PC boxes will load. Click any Pokémon card to copy its Showdown export to clipboard.
+
+---
+
+## Database Schema
+
+| Table | Description |
+|---|---|
+| `runs` | One row per playthrough. Tracks game name, save filename, and active status. |
+| `pokemon_identity` | Unique record per individual Pokémon, identified by `personality_value`. |
+| `game_session` | One row per save file update. Records save hash and timestamp. |
+| `party_snapshot` | Full party state at each session — all stats, moves, EVs, IVs. |
+| `box_snapshot` | Full box state at each session. |
+| `change_log` | Diffs between sessions: level ups, move changes, evolutions, party joins/leaves. |
+
+---
+
+## Sprites
+
+Local sprites are served from `assets/sprites/` and must be named in lowercase to match the species name (e.g. `charizard.png`). If no local sprite is found, the viewer falls back to the [PokeAPI CDN](https://github.com/PokeAPI/sprites).
+
+---
+
+## Supported Games
+
+| Game | Readers |
+|---|---|
+| Pokémon Storm Silver (HGSS hack) | `storm_silver_party_reader.py`, `storm_silver_box_reader.py` |
+
+---
+
+## Dependencies
+
+| Package | Purpose |
+|---|---|
+| `reflex` | Web UI framework |
+| `pandas` | DataFrame operations and CSV lookups |
+| `SQLAlchemy` + `psycopg2-binary` | PostgreSQL ORM and driver |
+| `dropbox` | Dropbox API client for save file sync |
+| `python-dotenv` | `.env` file loading |

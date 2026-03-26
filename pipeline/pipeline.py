@@ -4,8 +4,8 @@ import hashlib
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-from storm_silver_party_reader import read_party, export_party
-from storm_silver_box_reader import read_boxes, print_boxes, export_boxes
+from storm_silver_party_reader import read_party
+from storm_silver_box_reader import read_boxes
 from changes import compute_changes, record_changes
 
 '''if __name__ == "__main__":
@@ -19,6 +19,7 @@ from changes import compute_changes, record_changes
     
     print_boxes(boxes)
     export_boxes(boxes)'''
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 GAME_SAV = os.getenv("SAV")

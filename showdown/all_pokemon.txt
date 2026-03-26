@@ -1,0 +1,158 @@
+=== PARTY ===
+
+Charmeleon
+Level: 17
+Hasty Nature
+Ability: Blaze
+EVs: 1 HP / 3 Atk / 4 Def / 2 Spe / 5 SpA / 0 SpD
+IVs: 26 HP / 30 Atk / 1 Def / 8 Spe / 10 SpA / 14 SpD
+- Metal Claw
+- Growl
+- Ember
+- Dragon Rage
+
+Totodile
+Level: 17
+Relaxed Nature
+Ability: Guts
+EVs: 4 HP / 2 Atk / 5 Def / 12 Spe / 2 SpA / 3 SpD
+IVs: 25 HP / 9 Atk / 11 Def / 3 Spe / 14 SpA / 18 SpD
+- Scary Face
+- Leer
+- Water Gun
+- Bite
+
+Kadabra
+Level: 17
+Calm Nature
+Ability: Synchronize
+EVs: 1 HP / 3 Atk / 2 Def / 8 Spe / 2 SpA / 0 SpD
+IVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+- Ice Ball
+- Sheer Cold
+- Poison Tail
+- Sheer Cold
+
+Dratini
+Level: 17
+Adamant Nature
+Ability: Shed Skin
+EVs: 1 HP / 2 Atk / 0 Def / 0 Spe / 2 SpA / 0 SpD
+IVs: 24 HP / 20 Atk / 5 Def / 1 Spe / 1 SpA / 29 SpD
+- Wrap
+- Dragon Rage
+- Thunder Wave
+- Twister
+
+Togepi @ Upgrade carf
+Level: 17
+Hasty Nature
+Ability: Serene Grace
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 26 HP / 24 Atk / 0 Def / 18 Spe / 0 SpA / 13 SpD
+- Hyper Voice
+- Poison Tail
+- Bulk Up
+- Bullet Seed
+
+Magnemite
+Level: 17
+Mild Nature
+Ability: Sturdy
+EVs: 0 HP / 3 Atk / 0 Def / 3 Spe / 0 SpA / 1 SpD
+IVs: 11 HP / 8 Atk / 21 Def / 7 Spe / 16 SpA / 7 SpD
+- Metal Sound
+- Sonic Boom
+- Thunder Shock
+- Thunder Wave
+
+=== PC BOXES ===
+
+Umbreon
+Mild Nature
+Ability: Synchronize
+EVs: 0 HP / 5 Atk / 3 Def / 2 Spe / 6 SpA / 2 SpD
+IVs: 2 HP / 24 Atk / 12 Def / 14 Spe / 8 SpA / 9 SpD
+- Growl
+- Pursuit
+- Helping Hand
+- Bite
+
+Treecko
+Lonely Nature
+Ability: Overgrow
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 9 HP / 15 Atk / 0 Def / 19 Spe / 31 SpA / 30 SpD
+- Pursuit
+- Leer
+- Absorb
+- Quick Attack
+
+Sandshrew
+Quirky Nature
+Ability: Sand Veil
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 0 Atk / 15 Def / 0 Spe / 2 SpA / 1 SpD
+- Rapid Spin
+- Defense Curl
+- Sand Attack
+- Poison Sting
+
+Bidoof
+Brave Nature
+Ability: Simple
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 0 HP / 27 Atk / 22 Def / 11 Spe / 22 SpA / 20 SpD
+- Tackle
+- Growl
+- Defense Curl
+
+Rattata
+Naughty Nature
+Ability: Guts
+EVs: 0 HP / 0 Atk / 0 Def / 2 Spe / 0 SpA / 1 SpD
+IVs: 25 HP / 31 Atk / 3 Def / 13 Spe / 12 SpA / 2 SpD
+- Tackle
+- Bite
+- Quick Attack
+- Pursuit
+
+Taillow
+Bold Nature
+Ability: Scrappy
+EVs: 2 HP / 8 Atk / 3 Def / 1 Spe / 5 SpA / 1 SpD
+IVs: 29 HP / 7 Atk / 2 Def / 23 Spe / 6 SpA / 25 SpD
+- Wing Attack
+- Growl
+- Focus Energy
+- Quick Attack
+
+Larvitar
+Careful Nature
+Ability: Battle Armor
+EVs: 3 HP / 5 Atk / 1 Def / 5 Spe / 2 SpA / 0 SpD
+IVs: 28 HP / 18 Atk / 15 Def / 21 Spe / 25 SpA / 23 SpD
+- Bite
+- Rock Slide
+- Sandstorm
+- Screech
+
+Shellos
+Gentle Nature
+Ability: Storm Drain
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 15 HP / 6 Atk / 5 Def / 25 Spe / 25 SpA / 20 SpD
+- Mud Sport
+- Harden
+- Water Pulse
+- Fiery Dance
+
+Magikarp
+Serious Nature
+Ability: Swift Swim
+EVs: 0 HP / 0 Atk / 0 Def / 0 Spe / 0 SpA / 0 SpD
+IVs: 27 HP / 17 Atk / 1 Def / 20 Spe / 8 SpA / 19 SpD
+- Bubble
+- Reversal
+- Tackle
+

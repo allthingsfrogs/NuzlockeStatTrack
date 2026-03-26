@@ -5,7 +5,7 @@
 -- One row per playthrough / .sav file
 CREATE TABLE IF NOT EXISTS runs (
     run_id          SERIAL PRIMARY KEY,
-    game            VARCHAR(50)  NOT NULL,  -- e.g. 'Storm Silver', 'Radical Red'
+    game            VARCHAR(50)  NOT NULL,  -- e.g. 'Storm Silver'
     sav_filename    VARCHAR(255) NOT NULL,  -- e.g. 'storm_silver.sav'
     is_active       BOOLEAN      NOT NULL DEFAULT TRUE,
     ended_at        TIMESTAMP,              -- NULL if run is still active
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS pokemon_identity (
     pokemon_id      SERIAL PRIMARY KEY,
     dex_number      INT,
     run_id          INT                 NOT NULL REFERENCES runs(run_id),     
-    personality_value VARCHAR(8)          NOT NULL, -- hex PV, never changes for a given Pokemon
+    personality_value BIGINT            NOT NULL, -- hex PV, never changes for a given Pokemon
     location_met    VARCHAR(50),
     UNIQUE (personality_value, run_id)     
 );
@@ -35,14 +35,15 @@ CREATE TABLE IF NOT EXISTS party_snapshot (
     pokemon_id      INT          NOT NULL REFERENCES pokemon_identity(pokemon_id),
     species         VARCHAR(50)  NOT NULL,
     type1           VARCHAR(25)  NOT NULL,
-    type2           VARCHAR(25)  NOT NULL,
+    type2           VARCHAR(25),
     nickname        VARCHAR(20),
     exp_level       SMALLINT     NOT NULL DEFAULT 1,
     held_item       VARCHAR(50),
     location_met    VARCHAR(50),
     ability         VARCHAR(50),
     nature          VARCHAR(20),
-    personality_value   VARCHAR(50),
+    personality_value BIGINT     NOT NULL,
+    growth_rate     VARCHAR(25)  NOT NULL,
     is_egg          BOOLEAN      NOT NULL DEFAULT FALSE,
     -- EVs
     ev_hp           SMALLINT     NOT NULL DEFAULT 0,
@@ -72,16 +73,17 @@ CREATE TABLE IF NOT EXISTS box_snapshot (
     session_id      INT          NOT NULL REFERENCES game_session(session_id),
     pokemon_id      INT          NOT NULL REFERENCES pokemon_identity(pokemon_id),
     species         VARCHAR(50)  NOT NULL,
-    type1    VARCHAR(25)  NOT NULL,
-    type2    VARCHAR(25)  NOT NULL,
+    type1    VARCHAR(25) NOT NULL,
+    type2    VARCHAR(25),
     nickname        VARCHAR(20),
-    exp_level       SMALLINT,
+    exp_level       SMALLINT     NOT NULL DEFAULT 1,
     held_item       VARCHAR(50),
     location_met    VARCHAR(50),
     ability         VARCHAR(50),
     nature          VARCHAR(20),
+    growth_rate     VARCHAR(25) NOT NULL,
     is_egg          BOOLEAN      NOT NULL DEFAULT FALSE,
-    personality_value VARCHAR(50),
+    personality_value BIGINT     NOT NULL,
     -- EVs
     ev_hp           SMALLINT     NOT NULL DEFAULT 0,
     ev_atk          SMALLINT     NOT NULL DEFAULT 0,

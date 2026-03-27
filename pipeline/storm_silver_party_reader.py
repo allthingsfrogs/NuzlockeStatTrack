@@ -289,7 +289,7 @@ def read_party(sav_path):
             if mon and mon['dex_num'] > 0:
                 party.append(mon)
         if party:
-            print(f"DEBUG: found {len(party)} party pokemon at base 0x{base:05X}")
+            #print(f"DEBUG: found {len(party)} party pokemon at base 0x{base:05X}")
             return party
 
     print("DEBUG: no party found at known offsets, scanning...")

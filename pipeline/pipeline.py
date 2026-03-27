@@ -1,11 +1,13 @@
-import os 
+import os
 import sys
+import time
 import hashlib
+import dropbox
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-from storm_silver_party_reader import read_party
-from storm_silver_box_reader import read_boxes
+from storm_silver_party_reader import read_party, export_party
+from storm_silver_box_reader import read_boxes, export_boxes
 from changes import compute_changes, record_changes
 
 '''if __name__ == "__main__":
@@ -23,9 +25,32 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 GAME_SAV = os.getenv("SAV")
+DROPBOX_PATH = os.getenv("DROPBOX_PATH")
 RUN_ID = 1  # set once when you create_run(), then hardcode it here
 
 engine = create_engine(DATABASE_URL)
+
+dbx = dropbox.Dropbox(
+    oauth2_refresh_token=os.getenv("REFRESH"),
+    app_key=os.getenv("A_K"),
+    app_secret=os.getenv("A_S"),
+)
+
+def poll_for_new_save(interval=5):
+    print("Polling Dropbox for save changes...")
+    last_hash = dbx.files_get_metadata(DROPBOX_PATH).content_hash
+    while True:
+        time.sleep(interval)
+        metadata = dbx.files_get_metadata(DROPBOX_PATH)
+        if metadata.content_hash != last_hash:
+            print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+            print("\n ✅ Change detected! ✅ \n ☁️⤵️ downloading... ☁️⤵️ \n \n")
+            _, response = dbx.files_download(DROPBOX_PATH)
+            with open(GAME_SAV, "wb") as f:
+                f.write(response.content)
+            print(f"Downloaded new version (rev: {metadata.rev})")
+            break
+        print("Polling...")
 
 def create_run(engine, game_name, sav_filename):
     with engine.connect() as conn:
@@ -166,11 +191,13 @@ def run_pipeline(sav_path):
     sav_hash = get_sav_hash(sav_path)
     
     if already_processed(engine, RUN_ID, sav_hash):
-        print("No changes detected, skipping.")
+        print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+        print("\n ❌ No changes detected, skipping ❌ \n")
         return
 
     session_id = create_session(engine, RUN_ID, sav_hash)
-    print(f"Created session {session_id}")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print(f"\n Created session {session_id} \n")
 
     party = read_party(sav_path)
     boxes = read_boxes(sav_path)
@@ -179,10 +206,15 @@ def run_pipeline(sav_path):
     box_df = build_box_df(boxes, session_id, engine, RUN_ID)
 
     write_to_db(party_df, 'party_snapshot', engine)
-    print(f"Wrote {len(party_df)} party rows to database")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print(f"\n 🖋️🎉 Wrote {len(party_df)} party rows to database 🖋️🎉 \n")
 
     write_to_db(box_df, 'box_snapshot', engine)
-    print(f"Wrote {len(box_df)} box rows to database")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print(f"\n 🖋️💻 Wrote {len(box_df)} box rows to database 🖋️💻  \n")
+
+    export_party(sav_path)
+    export_boxes(boxes)
 
     changes = compute_changes(engine, RUN_ID, session_id)
     for c in changes:
@@ -190,4 +222,5 @@ def run_pipeline(sav_path):
     record_changes(engine, session_id, changes)
 
 if __name__ == "__main__":
+    poll_for_new_save()
     run_pipeline(GAME_SAV)

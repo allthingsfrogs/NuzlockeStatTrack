@@ -39,7 +39,7 @@ NuzlockeStatTrack/
 │   ├── storm_silver_box_reader.py   # Box parser for Storm Silver
 │   ├── reader_utils.py              # Shared utilities: exp-to-level, growth rate lookup
 │   ├── changes.py                   # Session diff logic: detects what changed between saves
-│   ├── observer.py                  # Dropbox polling daemon
+│   ├── observer.py                  # Legacy standalone polling daemon (superseded by pipeline.py)
 │   └── db_refresh.py                # Dropbox OAuth token helper
 │
 ├── resources/
@@ -74,7 +74,7 @@ NuzlockeStatTrack/
 ### 1. Clone and install dependencies
 
 ```bash
-git clone https://github.com/your-username/NuzlockeStatTrack.git
+git clone https://github.com/allthingsfrogs/NuzlockeStatTrack.git
 cd NuzlockeStatTrack
 python -m venv venv
 source venv/bin/activate
@@ -128,17 +128,7 @@ This inserts a row into the `runs` table and prints the `RUN_ID` to add to your 
 
 ## Usage
 
-### Auto-pipeline via Dropbox observer
-
-Watches your Dropbox save file and runs the full pipeline automatically on every change:
-
-```bash
-python pipeline/observer.py
-```
-
-### Run the pipeline manually
-
-Parses the save at `SAV` and updates the database:
+Polls Dropbox for save file changes, then automatically downloads and runs the full pipeline to record all Pokemon information in a formatted .txt, and records all Pokemon stat, move, and party changes since previous session in a Postegres database.
 
 ```bash
 python pipeline/pipeline.py
